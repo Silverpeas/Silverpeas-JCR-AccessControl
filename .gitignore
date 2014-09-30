@@ -1,0 +1,12 @@
+.idea
+*.iws
+*.ipr
+*.iml
+*.merge*
+catalog.xml
+target
+.settings
+.classpath
+.project
+nbactions.xml
+nb-configuration.xml
