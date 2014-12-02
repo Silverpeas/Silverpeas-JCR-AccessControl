@@ -105,7 +105,7 @@ public class SilverpeasAuthentication implements Authentication {
       String domainId = userIdParts[1];
       SilverpeasUser user = getSilverpeasUser(login, domainId);
       if (user != null) {
-        if (!user.mustBeAuthenticated()) {
+        if (user.mustBeAuthenticated()) {
           PasswordEncryption encryption = PasswordEncryptionFactory.getFactory()
               .getPasswordEncryption(user.getEncryptedPassword());
           try {
