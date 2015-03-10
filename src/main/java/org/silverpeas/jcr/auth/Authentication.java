@@ -34,7 +34,8 @@ public interface Authentication {
   /**
    * Authenticates a user by its credentials.
    * @param credentials the credentials of a user.
-   * @return the principal of the authenticated user.
+   * @return the principal of the authenticated user or null if the specified credentials aren't
+   * supported by this authentication.
    * @throws AuthenticationException if the authentication fails.
    */
   public Principal authenticate(final Credentials credentials) throws AuthenticationException;

@@ -25,7 +25,7 @@ package org.silverpeas.jcr.auth;
  * A user in Silverpeas.
  * @author mmoquillon
  */
-class SilverpeasUser {
+public class SilverpeasUser {
 
   private String id;
   private String domainId;
@@ -79,15 +79,6 @@ class SilverpeasUser {
 
   public SilverpeasUser withEncryptedPassword(final String encryptedPassword) {
     this.encryptedPassword = encryptedPassword;
-    return this;
-  }
-
-  public String getDomainTablePrefix() {
-    return domainTablePrefix;
-  }
-
-  public SilverpeasUser withDomainTablePrefix(final String domainTablePrefix) {
-    this.domainTablePrefix = domainTablePrefix;
     return this;
   }
 

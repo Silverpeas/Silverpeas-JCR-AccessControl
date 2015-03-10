@@ -92,8 +92,10 @@ public class SilverpeasJcrLoginModule implements LoginModule {
       // the JCR repository
       principal = null;
       if (credentials != null) {
-        Authentication authentication = AuthenticationProvider.getAuthentication();
-        principal = authentication.authenticate(credentials);
+        Authentication[] authentications = AuthenticationProvider.getAuthentications();
+        for (int i = 0; i < authentications.length && principal == null; i++) {
+          principal = authentications[i].authenticate(credentials);
+        }
       }
     } catch (IOException | AuthenticationException ex) {
       throw new LoginException(ex.getMessage());

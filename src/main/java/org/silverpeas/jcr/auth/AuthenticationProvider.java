@@ -1,14 +1,22 @@
 package org.silverpeas.jcr.auth;
 
 /**
- * A provider of an implementation of the {@code org.silverpeas.jcr.auth.Authentication} interface.
+ * A provider authentication mechanisms, each of them implementing the
+ * {@code org.silverpeas.jcr.auth.Authentication} interface.
  * @author mmoquillon
  */
 public class AuthenticationProvider {
 
-  private static Authentication authentication = new SilverpeasAuthentication();
+  private static Authentication[] authentications =
+      new Authentication[]{
+          new SQLSimpleAuthentication(),
+          new TokenAuthentication()};
 
-  public static Authentication getAuthentication() {
-    return authentication;
+  /**
+   * Gets all the authentication mechanisms supported by the access controller.
+   * @return an array of Authentication objects.
+   */
+  public static Authentication[] getAuthentications() {
+    return authentications;
   }
 }
