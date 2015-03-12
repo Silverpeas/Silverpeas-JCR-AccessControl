@@ -46,6 +46,8 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.nodetype.NodeType;
 import javax.security.auth.Subject;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import static org.silverpeas.jcr.JcrProperties.*;
@@ -67,6 +69,8 @@ public class SilverpeasAccessManager implements AccessManager {
 
   private static final String WORKSPACE_ACCESS_DENIED =
       "The user doesn't have the right to access the workspace {0}";
+
+  private static final List<String> WRITING_ROLES = Arrays.asList("admin", "publisher", "writer");
 
   private AMContext context = null;
   private WorkspaceAccessManager wspAccessMgr;
@@ -235,25 +239,31 @@ public class SilverpeasAccessManager implements AccessManager {
       return true;
     }
 
+    boolean isGranted = false;
     if (denotesNode(absPath)) {
       Session session = openSystemSession();
       try {
         String jcrPath = context.getNamePathResolver().getJCRPath(absPath);
         Node node = session.getNode(jcrPath);
-        if (absPath.getDepth() > 2 && isFolder(node)) {
-          return isPathAuthorized(absPath);
+        if (isFolder(node)) {
+          // only those with the correct roles can access it (for reading or modifying it).
+          isGranted = isPathAuthorized(absPath, permissions);
         } else if (isLockedFile(node)) {
-          return isFileAuthorized(node);
+          // only the user owning the file can access it (for reading or updating it).
+          isGranted = isFileAuthorized(node);
+        } else {
+          // it is an ordinary JCR node: everyone can read it but only those with specific roles
+          // can update it.
+          isGranted = permissions == Permission.READ || isPathAuthorized(absPath, permissions);
         }
       } finally {
         session.logout();
       }
-      return true;
-    } else if (denotesData(absPath)) {
-      return isGranted(absPath.getAncestor(1), permissions);
+    } else if (denotesProperty(absPath)) {
+      // it is a property, checks the right of the user to access its holder.
+      isGranted = isGranted(absPath.getAncestor(1), permissions);
     }
-
-    return false;
+    return isGranted;
   }
 
   /**
@@ -330,15 +340,18 @@ public class SilverpeasAccessManager implements AccessManager {
     return true;
   }
 
-  private boolean isPathAuthorized(Path path) {
+  private boolean isPathAuthorized(Path path, int permissions) {
     Set<SilverpeasUserPrincipal> principals =
         context.getSubject().getPrincipals(SilverpeasUserPrincipal.class);
     Path.Element[] elements = path.getElements();
     for (SilverpeasUserPrincipal principal : principals) {
+      if (principal.isAdministrator()) {
+        return true;
+      }
       for (Path.Element element : elements) {
-        if (principal.isAdministrator() ||
-            principal.getUserProfile(element.getName().getLocalName()) != null) {
-          return true;
+        SilverpeasUserProfile profile = principal.getUserProfile(element.getName().getLocalName());
+        if (profile != null) {
+          return permissions == Permission.READ || WRITING_ROLES.contains(profile.getRole());
         }
       }
     }
@@ -441,13 +454,13 @@ public class SilverpeasAccessManager implements AccessManager {
     }
   }
 
-  private boolean denotesData(Path path) {
+  private boolean denotesProperty(Path path) {
     try {
       if (path.denotesRoot()) {
         return false;
       }
       PropertyId propertyId = context.getHierarchyManager().resolvePropertyPath(path);
-      return propertyId != null && propertyId.getName().getLocalName().equals("data");
+      return propertyId != null && !propertyId.denotesNode();
 
     } catch (RepositoryException ex) {
       return false;

@@ -52,8 +52,8 @@ public class SQLSimpleAuthentication extends AbstractAuthentication {
       "select propfilename, classname from st_domain where id = ?";
 
   private static final String SELECT_USER_DATA =
-      "select du.id, du.password, u.accesslevel from {0}_user du left join st_user u on du.id = " +
-          "u.id where du.login = ? and u.state = 'VALID'";
+      "select du.id as id, du.password as password, u.accesslevel as accesslevel from " +
+          "{0}_user du left join st_user u on du.id = u.id where du.login = ? and u.state = ''VALID''";
 
   /**
    * Authenticates a user by its credentials.

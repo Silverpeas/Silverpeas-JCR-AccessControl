@@ -33,7 +33,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,8 +45,8 @@ public abstract class AbstractAuthentication implements Authentication {
 
   private static final String SELECT_USER_ROLES =
       "select r.rolename, r.instanceid, c.componentname from st_userrole_user_rel u join " +
-          "st_userrole r on u.userroleid = r.id join st_component c on c.id = r.instanceid where " +
-          "u.userid = ?";
+          "st_userrole r on u.userroleid = r.id join st_componentinstance c on " +
+          "c.id = r.instanceid where u.userid = ?";
 
   protected Principal getSilverpeasUserPrincipal(final SilverpeasUser user) {
     Principal principal;
