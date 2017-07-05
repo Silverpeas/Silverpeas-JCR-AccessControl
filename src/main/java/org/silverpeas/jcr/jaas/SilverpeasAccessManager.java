@@ -1,24 +1,26 @@
 /**
- * Copyright (C) 2000 - 2016 Silverpeas
+ * Copyright (C) 2000 - 2017 Silverpeas
  *
- * This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU Affero General Public License as published by the Free Software Foundation, either version 3
- * of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- * As a special exception to the terms and conditions of version 3.0 of the GPL, you may
- * redistribute this Program in connection with Free/Libre Open Source Software ("FLOSS")
- * applications as described in Silverpeas's FLOSS exception. You should have received a copy of the
- * text describing the FLOSS exception, and it is also available here:
- * "http://www.silverpeas.org/docs/core/legal/floss_exception.html"
+ * As a special exception to the terms and conditions of version 3.0 of
+ * the GPL, you may redistribute this Program in connection with Free/Libre
+ * Open Source Software ("FLOSS") applications as described in Silverpeas's
+ * FLOSS exception.  You should have received a copy of the text describing
+ * the FLOSS exception, and it is also available here:
+ * "http://www.silverpeas.org/legal/licensing"
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Affero General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.silverpeas.jcr.jaas;
 
 import org.apache.jackrabbit.core.id.ItemId;
@@ -55,10 +57,11 @@ import static org.silverpeas.jcr.JcrProperties.*;
 /**
  * The access manager controls the access rights of a Silverpeas user to access some resources
  * in the JCR repository.
- * <p/>
+ * <p>
  * By default, an authenticated user has access the whole content of the JCR repository. The only
  * restriction is when a node has property of belonging, its access is authorized to only the owner
  * of the node.
+ * </p>
  */
 public class SilverpeasAccessManager implements AccessManager {
 
@@ -294,9 +297,11 @@ public class SilverpeasAccessManager implements AccessManager {
    * Note, that this method should only be called for persisted items as NEW
    * items may not be visible to the permission evaluation.
    * For new items {@link #isGranted(org.apache.jackrabbit.spi.Path, int)} should be used
-   * instead.<p/>
+   * instead.
+   * <p>
    * If this method is called with both Path and ItemId it is left to the
    * evaluation, which parameter is used.
+   * </p>
    * @param itemPath The path to the item or <code>null</code> if itemId
    * should be used to determine the READ permission.
    * @param itemId Id of the item to be tested or <code>null</code> if the

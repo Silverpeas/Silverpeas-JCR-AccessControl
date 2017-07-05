@@ -1,24 +1,26 @@
-/*
- * Copyright (C) 2000 - 2016 Silverpeas
+/**
+ * Copyright (C) 2000 - 2017 Silverpeas
  *
- * This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU Affero General Public License as published by the Free Software Foundation, either version 3
- * of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- * As a special exception to the terms and conditions of version 3.0 of the GPL, you may
- * redistribute this Program in connection with Free/Libre Open Source Software ("FLOSS")
- * applications as described in Silverpeas's FLOSS exception. You should have received a copy of the
- * text describing the FLOSS exception, and it is also available here:
- * "http://www.silverpeas.org/docs/core/legal/floss_exception.html"
+ * As a special exception to the terms and conditions of version 3.0 of
+ * the GPL, you may redistribute this Program in connection with Free/Libre
+ * Open Source Software ("FLOSS") applications as described in Silverpeas's
+ * FLOSS exception.  You should have received a copy of the text describing
+ * the FLOSS exception, and it is also available here:
+ * "http://www.silverpeas.org/legal/licensing"
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Affero General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.silverpeas.jcr.auth.encryption;
 
 import java.io.UnsupportedEncodingException;
@@ -29,16 +31,19 @@ import java.util.Random;
  * A variation of the DES algorithm (Data Encryption Standard) as used in the Unix systems for a
  * while. It has variations intended to be used for encrypting password and it uses salting to
  * perturb the algorithm in different ways.
- * <p/>
+ * <p>
  * This symmetric-key encryption method uses a 56-bit key to encrypt a password and as such it
  * is now considered as insecure for many applications; in 1999 it was broken in 22 hours and 15
  * minutes. It was then replaced by the MD5 algorithm.
- * <p/>
+ * </p>
+ * <p>
  * It is no more supported in Silverpeas and it shouldn't be used anymore.
- * <p/>
+ * </p>
+ * <p>
  * It is the Java-based implementation of the unix encrypt command. It is based upon C source code
  * written by Eric Young, eay@psych.uq.oz.au.
  * This class is a renaming of the jcrypt class found at http://www.vulcanware.com/java_jcrypt/
+ * </p>
  * @author John F. Dumas
  */
 public class UnixDESEncryption implements PasswordEncryption {
@@ -634,11 +639,11 @@ public class UnixDESEncryption implements PasswordEncryption {
 
   /**
    * Gets the salt that was used to compute the specified digest.
-   * <p/>
+   * <p>
    * According to the cryptographic algorithm that computed the digest, the salt used in the
    * encryption can be retrieved from the digest itself. In the case the salt cannot be determine,
    * an empty one is then returned.
-   *
+   * </p>
    * @param digest the digest from which the salt has to be get.
    * @return the salt or nothing (an empty salt) if it cannot be get from the digest.
    */
@@ -653,12 +658,12 @@ public class UnixDESEncryption implements PasswordEncryption {
    * Does this encryption understand the specified digest?
    * An encryption understands usually the digest it has itself generated. This method is for
    * knowing the encryption that has computed a given digest.
-   * <p/>
+   * <p>
    * The DES encryption is particular in a way that a text in input produces a digest of the same
    * length; the length of the digest isn't fix and it varies with the input text. So, this method
    * can return bad response and it is recommended to ask before to others encryption to have a more
    * accurate in the response.
-   *
+   * </p>
    * @param digest the digest to analyse.
    * @return true if the specified digest was computed by this encryption, false if it doesn't
    *         understand it (either the encryption hasn't generated the digest or it cannot

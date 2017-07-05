@@ -1,24 +1,26 @@
-/*
- * Copyright (C) 2000 - 2016 Silverpeas
+/**
+ * Copyright (C) 2000 - 2017 Silverpeas
  *
- * This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU Affero General Public License as published by the Free Software Foundation, either version 3
- * of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- * As a special exception to the terms and conditions of version 3.0 of the GPL, you may
- * redistribute this Program in connection with Free/Libre Open Source Software ("FLOSS")
- * applications as described in Silverpeas's FLOSS exception. You should have received a copy of the
- * text describing the FLOSS exception, and it is also available here:
- * "http://www.silverpeas.org/docs/core/legal/floss_exception.html"
+ * As a special exception to the terms and conditions of version 3.0 of
+ * the GPL, you may redistribute this Program in connection with Free/Libre
+ * Open Source Software ("FLOSS") applications as described in Silverpeas's
+ * FLOSS exception.  You should have received a copy of the text describing
+ * the FLOSS exception, and it is also available here:
+ * "http://www.silverpeas.org/legal/licensing"
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Affero General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.silverpeas.jcr.auth.encryption;
 
 /****************************************************************************
@@ -44,18 +46,21 @@ import java.util.Random;
 /**
  * A variation of the MD5 algorithm (Message Digest 5) as used in modern Unix systems for hashing
  * the passwords.
- * <p/>
+ * <p>
  * This version uses salting to perturb the algorithm in different ways, and hence to be less
  * vulnerable to attacks.
- * <p/>
+ * </p>
+ * <p>
  * Since the discovery of the vulnerability of the MD5 algorithm, it is now replaced in the
  * current Unix systems by one of the SHA-2 algorithm (SHA-256 or SHA-512). OpenBSD,
  * an operating system notorious for being "obsessed with security", uses as its default
  * password authentication mechanism the bcrypt cryptographic algorithm (a modified version of
  * Blowfish).
- * <p/>
+ * </p>
+ * <p>
  * This class implements the popular MD5Crypt function as used by BSD and most modern Un*x systems.
  * It was basically converted from the C code write by Poul-Henning Kamp.
+ * </p>
  */
 public class UnixMD5Encryption implements PasswordEncryption {
 
@@ -234,11 +239,11 @@ public class UnixMD5Encryption implements PasswordEncryption {
 
   /**
    * Gets the salt that was used to compute the specified digest.
-   * <p/>
+   * <p>
    * According to the cryptographic algorithm that computed the digest, the salt used in the
    * encryption can be retrieved from the digest itself. In the case the salt cannot be determine,
    * an empty one is then returned.
-   *
+   * </p>
    * @param digest the digest from which the salt has to be get.
    * @return the salt or nothing (an empty salt) if it cannot be get from the digest.
    */

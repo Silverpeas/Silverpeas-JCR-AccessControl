@@ -1,22 +1,25 @@
-/*
- * Copyright (C) 2000 - 2016 Silverpeas
+/**
+ * Copyright (C) 2000 - 2017 Silverpeas
  *
- * This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU Affero General Public License as published by the Free Software Foundation, either version 3
- * of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- * As a special exception to the terms and conditions of version 3.0 of the GPL, you may
- * redistribute this Program in connection with Free/Libre Open Source Software ("FLOSS")
- * applications as described in Silverpeas's FLOSS exception. You should have received a copy of the
- * text describing the FLOSS exception, and it is also available here:
- * "http://www.silverpeas.org/docs/core/legal/floss_exception.html"
+ * As a special exception to the terms and conditions of version 3.0 of
+ * the GPL, you may redistribute this Program in connection with Free/Libre
+ * Open Source Software ("FLOSS") applications as described in Silverpeas's
+ * FLOSS exception.  You should have received a copy of the text describing
+ * the FLOSS exception, and it is also available here:
+ * "http://www.silverpeas.org/legal/licensing"
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Affero General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.silverpeas.jcr.auth.encryption;
 
@@ -30,19 +33,22 @@ import java.util.regex.Pattern;
 /**
  * A variation of the SHA-512 algorithm (Secure Hash Algorithm) as used in current Unix systems for
  * hashing the passwords.
- * <p/>
+ * <p>
  * This version uses salting and stretching to perturb the algorithm in different ways, and hence
  * to be less vulnerable to attacks. It computes a base64-encoded digest of 123 characters at
  * maximum from a salt and an unencrypted password; the SHA-512 encrypted password in the digest is
  * fixed at 86 characters.
- * <p/>
+ * </p>
+ * <p>
  * The UnixSHA512Encryption class is based upon the the new generation, scalable, SHA-512-based
  * Unix 'crypt' algorithm developed by a group of engineers from Red Hat, Sun, IBM, and HP for
  * common use in Unix and Linux.
- * <p/>
+ * </p>
+ * <p>
  * The Linux glibc library (starting at version 2.7) includes support for validating passwords
  * hashed using this algorithm.
- * <p/>
+ * </p>
+ * <p>
  * The algorithm itself was released into the Public Domain by Ulrich Drepper
  * &lt;drepper@redhat.com&gt;. A discussion of the rationale and development of this algorithm is
  * at
@@ -51,6 +57,7 @@ import java.util.regex.Pattern;
  * and the specification and a sample C language implementation is at
  * <a href="http://people.redhat.com/drepper/SHA-crypt.txt">
  * http://people.redhat.com/drepper/SHA-crypt.txt</a>
+ * </p>
  */
 public class UnixSHA512Encryption implements PasswordEncryption {
 
@@ -85,7 +92,6 @@ public class UnixSHA512Encryption implements PasswordEncryption {
 
   /**
    * Checks the specified password matches the specified digest.
-   * <p/>
    * @param password an unencrypted password.
    * @param digest a digest of a password with which the specified password has to be matched.
    * @throws AssertionError if the digest wasn't computed from the specified password.
@@ -100,13 +106,15 @@ public class UnixSHA512Encryption implements PasswordEncryption {
 
   /**
    * Gets the salt that was used to compute the specified digest.
-   * <p/>
+   * <p>
    * According to the cryptographic algorithm that computed the digest, the salt used in the
    * encryption can be retrieved from the digest itself. In the case the salt cannot be determine,
    * an empty one is then returned.
-   * <p/>
+   * </p>
+   * <p>
    * If the digest cannot be analysed by this encryption then an IllegalArgumentException exception
    * is thrown.
+   * </p>
    * @param digest the digest from which the salt has to be get.
    * @return the salt or nothing (an empty salt) if it cannot be get from the digest.
    */
