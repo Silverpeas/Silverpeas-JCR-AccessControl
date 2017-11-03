@@ -46,6 +46,7 @@ import java.util.regex.Pattern;
 public class TokenAuthentication extends AbstractAuthentication {
 
   private static final String USERID_TOKEN_ATTRIBUTE = "UserID";
+  private static final String AUTHORIZED_DOCUMENT_PATH_ATTRIBUTE = "AuthorizedDocumentPath";
   private static final String IDENTIFY_USER =
       "select id, accesslevel from st_user where state = 'VALID' and login = ? and domainId = ?";
   private static final Pattern TOKEN_FORMAT = Pattern.compile("[a-zA-Z0-9]{16}+");
@@ -85,16 +86,17 @@ public class TokenAuthentication extends AbstractAuthentication {
    */
   private Principal authenticate(TokenCredentials credentials) throws AuthenticationException {
     Principal principal = null;
-    String token = credentials.getToken();
-    String userID = credentials.getAttribute(USERID_TOKEN_ATTRIBUTE);
+    final String token = credentials.getToken();
+    final String userID = credentials.getAttribute(USERID_TOKEN_ATTRIBUTE);
     if (matches(token, userID)) {
-      String[] userIdParts = fetchUserIdParts(userID);
+      final String[] userIdParts = fetchUserIdParts(userID);
       if (userIdParts != null && userIdParts.length == 2) {
-        String login = userIdParts[0];
-        String domainId = userIdParts[1];
-        SilverpeasUser user = identifySilverpeasUser(login, domainId);
+        final String login = userIdParts[0];
+        final String domainId = userIdParts[1];
+        final SilverpeasUser user = identifySilverpeasUser(login, domainId);
         if (user != null) {
-          principal = getSilverpeasUserPrincipal(user);
+          final String authorizedDocumentPath = credentials.getAttribute(AUTHORIZED_DOCUMENT_PATH_ATTRIBUTE);
+          principal = getSilverpeasUserPrincipal(user, authorizedDocumentPath);
         } else {
           // a TokenCredentials must match an existing user. Otherwise, it is considered as a
           // forbidden access

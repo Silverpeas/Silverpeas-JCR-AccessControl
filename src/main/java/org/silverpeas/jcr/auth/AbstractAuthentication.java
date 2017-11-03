@@ -25,18 +25,13 @@ package org.silverpeas.jcr.auth;
 
 import org.silverpeas.jcr.jaas.SilverpeasJcrSystemPrincipal;
 import org.silverpeas.jcr.jaas.SilverpeasUserPrincipal;
-import org.silverpeas.jcr.jaas.SilverpeasUserProfile;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.security.Principal;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This class defines common operations authentication mechanisms can require in order to perform
@@ -45,34 +40,15 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractAuthentication implements Authentication {
 
-  private static final String SELECT_USER_ROLES =
-      "select r.rolename, r.instanceid, c.componentname from st_userrole_user_rel u join " +
-          "st_userrole r on u.userroleid = r.id join st_componentinstance c on " +
-          "c.id = r.instanceid where u.userid = ?";
-
-  protected Principal getSilverpeasUserPrincipal(final SilverpeasUser user) {
-    Principal principal;
+  protected Principal getSilverpeasUserPrincipal(final SilverpeasUser user,
+      final String authorizedDocumentPath) {
+    final Principal principal;
     if (user.isJcrSystemUser()) {
       principal = new SilverpeasJcrSystemPrincipal();
     } else {
-      try (Connection connection = openConnectionToDataSource();
-           PreparedStatement statement = connection.prepareStatement(SELECT_USER_ROLES)) {
-        statement.setInt(1, Integer.parseInt(user.getId()));
-        try (ResultSet resultSet = statement.executeQuery()) {
-          principal = new SilverpeasUserPrincipal(user.getId(), "A".equals(user.getAccessLevel()));
-          while (resultSet.next()) {
-            String componentInstanceId = resultSet.getString("instanceid");
-            String componentName = resultSet.getString("componentname");
-            String roleName = resultSet.getString("rolename");
-            SilverpeasUserProfile profile =
-                new SilverpeasUserProfile(componentName + componentInstanceId, roleName);
-            ((SilverpeasUserPrincipal) principal).addUserProfile(profile);
-          }
-        }
-      } catch (SQLException e) {
-        principal = null;
-        Logger.getLogger(getClass().getSimpleName()).log(Level.SEVERE, e.getMessage(), e);
-      }
+      principal = new SilverpeasUserPrincipal(user.getId(),
+                                              "A".equals(user.getAccessLevel()),
+                                              authorizedDocumentPath);
     }
     return principal;
   }

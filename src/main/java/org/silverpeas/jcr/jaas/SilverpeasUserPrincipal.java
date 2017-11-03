@@ -24,8 +24,6 @@
 package org.silverpeas.jcr.jaas;
 
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The principals of a user in Silverpeas. They are used to check the user has enough privileges to
@@ -35,20 +33,12 @@ public class SilverpeasUserPrincipal implements Principal {
 
   private String userId;
   private boolean administrator;
-  private Map<String, SilverpeasUserProfile> entries;
+  private String authorizedDocumentPath;
 
-  public SilverpeasUserPrincipal(String userId, boolean administrator) {
+  public SilverpeasUserPrincipal(String userId, boolean administrator, String authorizedDocumentPath) {
     this.userId = userId;
     this.administrator = administrator;
-    this.entries = new HashMap<>(100);
-  }
-
-  public void addUserProfile(SilverpeasUserProfile aProfile) {
-    entries.put(aProfile.getComponentId(), aProfile);
-  }
-
-  public SilverpeasUserProfile getUserProfile(String componentId) {
-    return this.entries.get(componentId);
+    this.authorizedDocumentPath = authorizedDocumentPath;
   }
 
   public String getUserId() {
@@ -64,4 +54,7 @@ public class SilverpeasUserPrincipal implements Principal {
     return userId;
   }
 
+  public String getAuthorizedDocumentPath() {
+    return authorizedDocumentPath;
+  }
 }

@@ -23,6 +23,8 @@
  */
 package org.silverpeas.jcr.jaas;
 
+import org.apache.commons.codec.Charsets;
+import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.jackrabbit.core.id.ItemId;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.id.PropertyId;
@@ -47,10 +49,13 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.nodetype.NodeType;
 import javax.security.auth.Subject;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.silverpeas.jcr.JcrProperties.*;
 
@@ -250,14 +255,14 @@ public class SilverpeasAccessManager implements AccessManager {
         Node node = session.getNode(jcrPath);
         if (isFolder(node)) {
           // only those with the correct roles can access it (for reading or modifying it).
-          isGranted = isPathAuthorized(absPath, permissions);
+          isGranted = isPathAuthorized(absPath);
         } else if (isLockedFile(node)) {
           // only the user owning the file can access it (for reading or updating it).
           isGranted = isFileAuthorized(node);
         } else {
           // it is an ordinary JCR node: everyone can read it but only those with specific roles
           // can update it.
-          isGranted = permissions == Permission.READ || isPathAuthorized(absPath, permissions);
+          isGranted = permissions == Permission.READ || isPathAuthorized(absPath);
         }
       } finally {
         session.logout();
@@ -345,19 +350,33 @@ public class SilverpeasAccessManager implements AccessManager {
     return true;
   }
 
-  private boolean isPathAuthorized(Path path, int permissions) {
-    Set<SilverpeasUserPrincipal> principals =
+  private boolean isPathAuthorized(Path path) {
+    final Set<SilverpeasUserPrincipal> principals =
         context.getSubject().getPrincipals(SilverpeasUserPrincipal.class);
-    Path.Element[] elements = path.getElements();
+    final Path.Element[] elements = path.getElements();
+    final String jcrPathToVerify = Arrays.stream(elements)
+                                         .map(e -> e.getName().getLocalName())
+                                         .collect(Collectors.joining("/"));
     for (SilverpeasUserPrincipal principal : principals) {
-      if (principal.isAdministrator()) {
+      if (principal.isAdministrator() || isWebdavPathAuthorized(principal, jcrPathToVerify)) {
         return true;
       }
-      for (Path.Element element : elements) {
-        SilverpeasUserProfile profile = principal.getUserProfile(element.getName().getLocalName());
-        if (profile != null) {
-          return permissions == Permission.READ || WRITING_ROLES.contains(profile.getRole());
-        }
+    }
+    return false;
+  }
+
+  private boolean isWebdavPathAuthorized(final SilverpeasUserPrincipal principal,
+      final String jcrPathToVerify) {
+    String authorizedDocumentPath = principal.getAuthorizedDocumentPath();
+    if (authorizedDocumentPath != null) {
+      try {
+        authorizedDocumentPath = URLDecoder.decode(authorizedDocumentPath, Charsets.UTF_8.name());
+      } catch (UnsupportedEncodingException ignore) {
+      }
+      if (authorizedDocumentPath.length() > jcrPathToVerify.length()) {
+        return authorizedDocumentPath.contains(jcrPathToVerify);
+      } else {
+        return jcrPathToVerify.contains(authorizedDocumentPath);
       }
     }
     return false;

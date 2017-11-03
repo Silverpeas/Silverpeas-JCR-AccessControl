@@ -53,9 +53,10 @@ public class SQLSimpleAuthentication extends AbstractAuthentication {
   private static final String SELECT_DOMAIN_TABLE =
       "select propfilename, classname from st_domain where id = ?";
 
-  private static final String SELECT_USER_DATA =
-      "select du.id as id, du.password as password, u.accesslevel as accesslevel from " +
-          "{0}_user du left join st_user u on du.id = u.id where du.login = ? and u.state = ''VALID''";
+  private static final String SELECT_DOMAIN_USER_DATA =
+      "SELECT du.id as id, du.password as password, u.accesslevel as accesslevel FROM " +
+          "{0}_user du LEFT JOIN st_user u ON CAST(du.id AS VARCHAR(100)) = u.specificid " +
+          "WHERE u.domainid = ? AND du.login = ? AND u.state = ''VALID''";
 
   /**
    * Authenticates a user by its credentials.
@@ -107,7 +108,7 @@ public class SQLSimpleAuthentication extends AbstractAuthentication {
             throw new AuthenticationException(error.getMessage());
           }
         }
-        principal = getSilverpeasUserPrincipal(user);
+        principal = getSilverpeasUserPrincipal(user, null);
       } else {
         throw new AuthenticationException("No user matching the login " + login +
             " and the domain identifier " + domainId);
@@ -138,9 +139,11 @@ public class SQLSimpleAuthentication extends AbstractAuthentication {
             if (className != null && (className.toLowerCase().endsWith("sqldriver") ||
                 className.toLowerCase().endsWith("silverpeasdomaindriver"))) {
               String domainName = fetchDomainNameFrom(domainResultSet.getString("propfilename"));
-              String sqlUserData = computeUserDataSQLQueryFor(domainName);
-              try (PreparedStatement userStatement = connection.prepareStatement(sqlUserData)) {
-                userStatement.setString(1, login);
+              String sqlDomainUserData = computeDomainUserDataSQLQueryFor(domainName);
+              try (PreparedStatement userStatement = connection.prepareStatement(sqlDomainUserData)) {
+                int i = 1;
+                userStatement.setInt(i++, Integer.parseInt(domainId));
+                userStatement.setString(i, login);
                 try (ResultSet userResultSet = userStatement.executeQuery()) {
                   if (userResultSet.next()) {
                     user = new SilverpeasUser().withId(userResultSet.getString("id"))
@@ -165,7 +168,7 @@ public class SQLSimpleAuthentication extends AbstractAuthentication {
     return (lastSepIndex > 0 ? propFileName.substring(lastSepIndex + 1).toLowerCase() : null);
   }
 
-  private String computeUserDataSQLQueryFor(String tableName) {
-    return MessageFormat.format(SELECT_USER_DATA, tableName);
+  private String computeDomainUserDataSQLQueryFor(String tableName) {
+    return MessageFormat.format(SELECT_DOMAIN_USER_DATA, tableName);
   }
 }
