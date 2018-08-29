@@ -23,8 +23,7 @@
  */
 package org.silverpeas.jcr.jaas;
 
-import org.apache.commons.codec.Charsets;
-import org.apache.jackrabbit.commons.JcrUtils;
+import org.apache.commons.codec.CharEncoding;
 import org.apache.jackrabbit.core.id.ItemId;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.id.PropertyId;
@@ -51,9 +50,9 @@ import javax.jcr.nodetype.NodeType;
 import javax.security.auth.Subject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -78,12 +77,9 @@ public class SilverpeasAccessManager implements AccessManager {
   private static final String WORKSPACE_ACCESS_DENIED =
       "The user doesn't have the right to access the workspace {0}";
 
-  private static final List<String> WRITING_ROLES = Arrays.asList("admin", "publisher", "writer");
-
   private AMContext context = null;
   private WorkspaceAccessManager wspAccessMgr;
   private byte accessMap = 0;
-  private NodeId rootNodeId;
   boolean initialized = false;
 
   /**
@@ -96,7 +92,7 @@ public class SilverpeasAccessManager implements AccessManager {
    * @throws Exception if another error occurs
    */
   @Override
-  public void init(final AMContext context) throws AccessDeniedException, Exception {
+  public void init(final AMContext context) throws Exception {
     init(context, null, null);
   }
 
@@ -113,11 +109,9 @@ public class SilverpeasAccessManager implements AccessManager {
    */
   @Override
   public void init(final AMContext context, final AccessControlProvider acProvider,
-      final WorkspaceAccessManager wspAccessMgr) throws AccessDeniedException, Exception {
+      final WorkspaceAccessManager wspAccessMgr) throws Exception {
     mustNotBeYetInitialized();
     this.context = context;
-    this.rootNodeId =
-        context.getHierarchyManager().resolveNodePath(PathFactoryImpl.getInstance().getRootPath());
     this.wspAccessMgr = wspAccessMgr;
     initAccessMap(context.getSubject());
     if (!canAccess(context.getWorkspaceName())) {
@@ -130,14 +124,12 @@ public class SilverpeasAccessManager implements AccessManager {
   /**
    * Close this access manager. After having closed an access manager,
    * further operations on this object are treated as illegal and throw
-   * @throws Exception if an error occurs
    */
   @Override
-  public void close() throws Exception {
+  public void close() {
     mustBeInitialized();
     context = null;
     wspAccessMgr = null;
-    rootNodeId = null;
     accessMap = 0;
     initialized = false;
   }
@@ -160,8 +152,7 @@ public class SilverpeasAccessManager implements AccessManager {
    */
   @Override
   @Deprecated
-  public void checkPermission(final ItemId id, final int permissions)
-      throws AccessDeniedException, ItemNotFoundException, RepositoryException {
+  public void checkPermission(final ItemId id, final int permissions) throws RepositoryException {
     if (!isGranted(id, permissions)) {
       throw new AccessDeniedException();
     }
@@ -179,7 +170,7 @@ public class SilverpeasAccessManager implements AccessManager {
    */
   @Override
   public void checkPermission(final Path absPath, final int permissions)
-      throws AccessDeniedException, RepositoryException {
+      throws RepositoryException {
     if (!isGranted(absPath, permissions)) {
       throw new AccessDeniedException();
     }
@@ -189,13 +180,10 @@ public class SilverpeasAccessManager implements AccessManager {
    * Determines whether the specified <code>permissions</code> are granted
    * on the repository level.
    * @param permissions The permissions to check.
-   * @throws javax.jcr.AccessDeniedException if permissions are denied.
-   * @throws javax.jcr.RepositoryException if another error occurs.
    */
   @Override
-  public void checkRepositoryPermission(final int permissions)
-      throws AccessDeniedException, RepositoryException {
-
+  public void checkRepositoryPermission(final int permissions) {
+    // nothing to do
   }
 
   /**
@@ -216,8 +204,7 @@ public class SilverpeasAccessManager implements AccessManager {
    */
   @Deprecated
   @Override
-  public boolean isGranted(final ItemId id, final int permissions)
-      throws ItemNotFoundException, RepositoryException {
+  public boolean isGranted(final ItemId id, final int permissions) throws RepositoryException {
     mustBeInitialized();
     if (isSystemAccess()) {
       return true;
@@ -370,8 +357,10 @@ public class SilverpeasAccessManager implements AccessManager {
     String authorizedDocumentPath = principal.getAuthorizedDocumentPath();
     if (authorizedDocumentPath != null) {
       try {
-        authorizedDocumentPath = URLDecoder.decode(authorizedDocumentPath, Charsets.UTF_8.name());
+        authorizedDocumentPath =
+            URLDecoder.decode(authorizedDocumentPath, Charset.forName(CharEncoding.UTF_8).name());
       } catch (UnsupportedEncodingException ignore) {
+        // nothing to do
       }
       if (authorizedDocumentPath.length() > jcrPathToVerify.length()) {
         return authorizedDocumentPath.contains(jcrPathToVerify);
@@ -407,14 +396,6 @@ public class SilverpeasAccessManager implements AccessManager {
 
   private boolean isSilverpeasUserAccess() {
     return (accessMap & 2) == 2;
-  }
-
-  private boolean isUserAccess() {
-    return (accessMap & 4) == 4;
-  }
-
-  private boolean isAnonymousAccess() {
-    return (accessMap & 8) == 8;
   }
 
   private boolean isFolder(Node node) throws RepositoryException {

@@ -35,6 +35,10 @@ public class AuthenticationProvider {
           new SQLSimpleAuthentication(),
           new TokenAuthentication()};
 
+  private AuthenticationProvider() {
+
+  }
+
   /**
    * Gets all the authentication mechanisms supported by the access controller.
    * @return an array of Authentication objects.

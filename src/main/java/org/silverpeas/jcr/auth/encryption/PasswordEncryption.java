@@ -34,7 +34,7 @@ package org.silverpeas.jcr.auth.encryption;
  * <p>
  * Usually, the hash functions used in the encryption of a password is based on a standard and well
  * known cryptographic algorithm: MD5, SHA-1, SHA-256, etc. Unfortunately, these functions don't
- * suit well for encrypting password for the reasons explained above; they suffer of the
+ * subcbvbv  it well for encrypting password for the reasons explained above; they suffer of the
  * recognizability and of the speed problems. This is why techniques like the salting (random
  * sequence of bytes which is added to the hash function) and the stretching (iteration of the hash
  * function many times) should be used to address the weakness of these one-way hash functions.
@@ -52,7 +52,7 @@ public interface PasswordEncryption {
    * password doesn't match the digest. It serves as a template for the error message to be carried
    * by the AssertionError error.
    */
-  final String BAD_PASSWORD_MESSAGE = "The password \"{0}\" doesn''t match the digest \"{1}\"";
+  String BAD_PASSWORD_MESSAGE = "The password \"{0}\" doesn''t match the digest \"{1}\"";
 
   /**
    * Encrypts the specified password by using a random salt (or no salt for some weakness

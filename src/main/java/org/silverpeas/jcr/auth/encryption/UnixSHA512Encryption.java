@@ -61,9 +61,9 @@ import java.util.regex.Pattern;
  */
 public class UnixSHA512Encryption implements PasswordEncryption {
 
-  static private final String SALTCHARS =
+  private static final String SALTCHARS =
       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890/.";
-  static private final String ENCRYPTION_METHOD_ID = "$6$";
+  private static final String ENCRYPTION_METHOD_ID = "$6$";
 
   /**
    * Encrypts the specified password by using a random salt (or no salt for some weakness

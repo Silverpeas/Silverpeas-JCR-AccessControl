@@ -24,7 +24,6 @@
 package org.silverpeas.jcr.auth;
 
 import javax.jcr.Credentials;
-import javax.jcr.SimpleCredentials;
 import java.security.Principal;
 
 /**

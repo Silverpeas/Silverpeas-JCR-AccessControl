@@ -51,7 +51,7 @@ public class SilverpeasUserPrincipal implements Principal {
 
   @Override
   public String getName() {
-    return userId;
+    return getUserId();
   }
 
   public String getAuthorizedDocumentPath() {

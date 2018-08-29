@@ -164,7 +164,7 @@ public class SQLSimpleAuthentication extends AbstractAuthentication {
   }
 
   private String fetchDomainNameFrom(String propFileName) {
-    int lastSepIndex = propFileName.lastIndexOf(".");
+    int lastSepIndex = propFileName.lastIndexOf('.');
     return (lastSepIndex > 0 ? propFileName.substring(lastSepIndex + 1).toLowerCase() : null);
   }
 

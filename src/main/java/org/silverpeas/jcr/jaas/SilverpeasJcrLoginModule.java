@@ -57,7 +57,7 @@ public class SilverpeasJcrLoginModule implements LoginModule {
 
 
   @Override
-  public boolean abort() throws LoginException {
+  public boolean abort() {
     if (principal != null) {
       return logout();
     }
@@ -65,10 +65,12 @@ public class SilverpeasJcrLoginModule implements LoginModule {
   }
 
   @Override
-  public boolean commit() throws LoginException {
+  public boolean commit() {
     if (principal != null) {
       subject.getPrincipals().add(principal);
-      subject.getPrivateCredentials().add(credentials);
+      if (credentials != null) {
+        subject.getPrivateCredentials().add(credentials);
+      }
       return true;
     }
     return false;
@@ -91,7 +93,7 @@ public class SilverpeasJcrLoginModule implements LoginModule {
       // Get credentials using a JAAS callback
       CredentialsCallback credentialsCallback = new CredentialsCallback();
       callbackHandler.handle(new Callback[]{credentialsCallback});
-      Credentials credentials = credentialsCallback.getCredentials();
+      credentials = credentialsCallback.getCredentials();
       // Use the credentials to authenticate the subject and then to get its principal to access
       // the JCR repository
       principal = null;
@@ -110,7 +112,7 @@ public class SilverpeasJcrLoginModule implements LoginModule {
   }
 
   @Override
-  public boolean logout() throws LoginException {
+  public boolean logout() {
     subject.getPrincipals().remove(principal);
     return true;
   }

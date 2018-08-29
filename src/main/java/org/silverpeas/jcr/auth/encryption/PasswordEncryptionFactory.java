@@ -73,7 +73,7 @@ public class PasswordEncryptionFactory {
    * @throws IllegalArgumentException if the digest was not computed by any of the password
    * encryption supported in Silverpeas.
    */
-  public PasswordEncryption getPasswordEncryption(String digest) throws IllegalArgumentException {
+  public PasswordEncryption getPasswordEncryption(String digest) {
     PasswordEncryption[] availableEncryption =
         new PasswordEncryption[]{ currentEncryption, new UnixMD5Encryption(),
             new UnixDESEncryption() };

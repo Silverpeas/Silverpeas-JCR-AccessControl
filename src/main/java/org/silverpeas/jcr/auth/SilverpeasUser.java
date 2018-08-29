@@ -33,7 +33,6 @@ public class SilverpeasUser {
   private String domainId;
   private String login;
   private String encryptedPassword;
-  private String domainTablePrefix;
   private String accessLevel;
 
   private static final String JCR_SYSTEM_LOGIN = "jcr-system";
