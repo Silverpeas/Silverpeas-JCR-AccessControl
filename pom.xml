@@ -30,7 +30,7 @@
 
   <groupId>org.silverpeas.jcr</groupId>
   <artifactId>access-control</artifactId>
-  <version>1.3-SNAPSHOT</version>
+  <version>1.3</version>
   <packaging>jar</packaging>
 
   <name>Silverpeas JCR Access Control</name>
