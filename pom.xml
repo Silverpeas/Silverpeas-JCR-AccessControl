@@ -30,7 +30,7 @@
 
   <groupId>org.silverpeas.jcr</groupId>
   <artifactId>access-control</artifactId>
-  <version>1.4-SNAPSHOT</version>
+  <version>1.5-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Silverpeas JCR Access Control</name>
@@ -95,7 +95,7 @@
 
   <properties>
     <!-- property used by the CI to both deploy a build version and release the next stable version -->
-    <next.release>1.4</next.release>
+    <next.release>1.5</next.release>
     <maven.compiler.release>11</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackrabbit.version>2.20.2</jackrabbit.version>
